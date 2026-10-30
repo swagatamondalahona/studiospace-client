@@ -24,3 +24,25 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* StudioSpace Hero Slider */
+
+.hero-swiper .swiper-pagination {
+  bottom: 35px !important;
+  left: 5% !important;
+  width: fit-content !important;
+}
+
+.hero-swiper .swiper-pagination-bullet {
+  width: 9px;
+  height: 9px;
+  background: #ffffff;
+  opacity: 0.4;
+}
+
+.hero-swiper .swiper-pagination-bullet-active {
+  width: 28px;
+  border-radius: 10px;
+  background: #3b82f6;
+  opacity: 1;
+}
