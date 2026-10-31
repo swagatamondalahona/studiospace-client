@@ -52,11 +52,11 @@ const slides = [
 
 export default function HeroSliderContent() {
     return (
-        <section className="relative w-full overflow-hidden bg-[#080D1A]">
-
+        <section className="relative w-full overflow-hidden bg-[#dcebe0] dark:bg-[#0b0f0d]">
             <Swiper
                 modules={[Autoplay, EffectFade, Pagination, Navigation]}
                 effect="fade"
+                fadeEffect={{ crossFade: true }}
                 speed={1000}
                 loop={true}
                 autoplay={{
@@ -86,37 +86,44 @@ export default function HeroSliderContent() {
                                 className="object-cover"
                             />
 
-                            {/* Dark Overlay */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-[#080D1A] via-[#080D1A]/85 to-[#080D1A]/30" />
+                            {/* Light Mode Overlay - Reduced Gradient */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-[#071A12]/65 via-[#071A12]/30 to-transparent dark:hidden" />
 
-                            <div className="absolute inset-0 bg-gradient-to-t from-[#080D1A]/70 via-transparent to-[#080D1A]/20" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#071A12]/25 via-transparent to-transparent dark:hidden" />
+
+                            {/* Dark Mode Overlay - Reduced Gradient */}
+                            <div className="absolute inset-0 hidden bg-gradient-to-r from-[#0b0f0d]/70 via-[#0b0f0d]/35 to-transparent dark:block" />
+
+                            <div className="absolute inset-0 hidden bg-gradient-to-t from-[#0b0f0d]/35 via-transparent to-transparent dark:block" />
 
                             {/* Hero Content */}
                             <div className="relative z-10 mx-auto w-full max-w-7xl px-5 py-24 sm:px-8 lg:px-12">
                                 <div className="max-w-3xl">
 
+                                    {/* Subtitle */}
                                     <div className="mb-7 flex items-center gap-3">
-                                        <span className="h-[2px] w-10 bg-blue-500" />
+                                        <span className="h-[2px] w-10 bg-[#34d399]" />
 
-                                        <p className="text-sm font-bold tracking-[0.25em] text-blue-400">
+                                        <p className="text-sm font-bold tracking-[0.25em] text-[#a7f3d0]">
                                             {slide.subtitle}
                                         </p>
                                     </div>
 
+                                    {/* Title */}
                                     <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl md:text-6xl lg:text-7xl">
                                         {slide.title}
                                     </h1>
 
-                                    <p className="mt-7 max-w-xl text-base leading-8 text-gray-300 sm:text-lg">
+                                    {/* Description */}
+                                    <p className="mt-7 max-w-xl text-base leading-8 text-slate-100 sm:text-lg">
                                         {slide.description}
                                     </p>
 
                                     {/* CTA Buttons */}
                                     <div className="mt-10 flex flex-wrap items-center gap-4">
-
                                         <Link
                                             href="/studios"
-                                            className="group flex items-center gap-3 rounded-xl bg-blue-600 px-7 py-4 font-bold text-white shadow-lg shadow-blue-600/30 transition hover:-translate-y-1 hover:bg-blue-500"
+                                            className="group flex items-center gap-3 rounded-xl bg-[#166534] px-7 py-4 font-bold text-white shadow-lg shadow-emerald-950/30 transition hover:-translate-y-1 hover:bg-[#15803d] dark:bg-[#34d399] dark:text-[#0b0f0d] dark:shadow-emerald-400/10 dark:hover:bg-[#6ee7b7]"
                                         >
                                             Explore Studios
 
@@ -128,19 +135,18 @@ export default function HeroSliderContent() {
 
                                         <Link
                                             href="/studios"
-                                            className="flex items-center gap-3 rounded-xl border border-white/30 bg-white/5 px-7 py-4 font-bold text-white backdrop-blur-md transition hover:border-blue-400 hover:bg-blue-500/10"
+                                            className="flex items-center gap-3 rounded-xl border border-white/50 bg-white/10 px-7 py-4 font-bold text-white backdrop-blur-md transition hover:border-[#34d399] hover:bg-[#34d399]/20 dark:border-white/30 dark:bg-white/5 dark:text-white dark:hover:border-[#34d399] dark:hover:bg-[#34d399]/10"
                                         >
                                             <Play size={17} fill="currentColor" />
                                             Host Your Space
                                         </Link>
-
                                     </div>
 
-                                    <div className="mt-14 flex items-center gap-4 text-sm text-gray-400">
-                                        <span className="h-px w-12 bg-blue-500/70" />
+                                    {/* Bottom Text */}
+                                    <div className="mt-14 flex items-center gap-4 text-sm text-slate-200">
+                                        <span className="h-px w-12 bg-[#34d399]/80" />
                                         <span>DISCOVER · CREATE · INSPIRE</span>
                                     </div>
-
                                 </div>
                             </div>
                         </div>
@@ -150,11 +156,10 @@ export default function HeroSliderContent() {
 
             {/* Navigation Buttons */}
             <div className="absolute bottom-10 right-6 z-20 flex gap-3 sm:right-12 lg:right-20">
-
                 <button
                     type="button"
                     aria-label="Previous slide"
-                    className="hero-prev flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-md transition hover:border-blue-400 hover:bg-blue-600"
+                    className="hero-prev flex h-12 w-12 items-center justify-center rounded-full border border-white/40 bg-[#071A12]/40 text-white backdrop-blur-md transition hover:border-[#34d399] hover:bg-[#166534] dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:border-[#34d399] dark:hover:bg-[#166534]"
                 >
                     <ChevronLeft size={22} />
                 </button>
@@ -162,11 +167,10 @@ export default function HeroSliderContent() {
                 <button
                     type="button"
                     aria-label="Next slide"
-                    className="hero-next flex h-12 w-12 items-center justify-center rounded-full border border-white/20 bg-white/10 text-white backdrop-blur-md transition hover:border-blue-400 hover:bg-blue-600"
+                    className="hero-next flex h-12 w-12 items-center justify-center rounded-full border border-white/40 bg-[#071A12]/40 text-white backdrop-blur-md transition hover:border-[#34d399] hover:bg-[#166534] dark:border-white/20 dark:bg-white/10 dark:text-white dark:hover:border-[#34d399] dark:hover:bg-[#166534]"
                 >
                     <ChevronRight size={22} />
                 </button>
-
             </div>
         </section>
     );

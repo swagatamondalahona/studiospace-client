@@ -37,24 +37,23 @@ const socialLinks = [
 
 export default function Footer() {
     return (
-        <footer className="border-t border-white/10 bg-[#030712] px-6 pt-16 text-white md:px-12 lg:px-20">
+        <footer className="border-t border-[#b8d1bf] bg-[#cbded0] px-6 pt-16 text-[#18352a] transition-colors duration-300 dark:border-[#263d32] dark:bg-[#080d0a] dark:text-white md:px-12 lg:px-20">
             <div className="mx-auto max-w-7xl">
-
                 <div className="grid gap-12 pb-14 sm:grid-cols-2 lg:grid-cols-5">
 
                     {/* Brand */}
                     <div>
                         <Link href="/" className="flex w-fit items-center gap-3">
-                            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-blue-400 to-blue-700">
+                            <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#166534] to-[#34d399]">
                                 <AudioLines size={25} className="text-white" />
                             </span>
 
                             <span className="text-2xl font-bold tracking-tight">
-                                Studio<span className="text-blue-400">Space</span>
+                                Studio<span className="text-[#166534] dark:text-[#34d399]">Space</span>
                             </span>
                         </Link>
 
-                        <p className="mt-5 max-w-xs text-sm leading-7 text-slate-400">
+                        <p className="mt-5 max-w-xs text-sm leading-7 text-[#40594b] dark:text-[#a7b9ae]">
                             Discover inspiring creative spaces, connect with talented hosts,
                             and bring your next big idea to life.
                         </p>
@@ -68,7 +67,7 @@ export default function Footer() {
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     aria-label={social.name}
-                                    className="flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-400 transition hover:border-blue-400/50 hover:bg-blue-500/10 hover:text-blue-400"
+                                    className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#a7c9b1] bg-[#edf5ef] text-[#52665b] transition hover:border-[#166534] hover:bg-[#166534] hover:text-white dark:border-[#263d32] dark:bg-[#14251f] dark:text-[#a7b9ae] dark:hover:border-[#34d399]/50 dark:hover:bg-[#34d399]/10 dark:hover:text-[#34d399]"
                                 >
                                     <span className="text-sm font-bold">
                                         {social.name === "Facebook"
@@ -95,7 +94,7 @@ export default function Footer() {
                                 <li key={link.name}>
                                     <Link
                                         href={link.href}
-                                        className="text-sm text-slate-400 transition hover:text-blue-400"
+                                        className="text-sm text-[#52665b] transition hover:text-[#166534] dark:text-[#a7b9ae] dark:hover:text-[#34d399]"
                                     >
                                         {link.name}
                                     </Link>
@@ -115,7 +114,7 @@ export default function Footer() {
                                 <li key={link.name}>
                                     <Link
                                         href={link.href}
-                                        className="text-sm text-slate-400 transition hover:text-blue-400"
+                                        className="text-sm text-[#52665b] transition hover:text-[#166534] dark:text-[#a7b9ae] dark:hover:text-[#34d399]"
                                     >
                                         {link.name}
                                     </Link>
@@ -135,7 +134,7 @@ export default function Footer() {
                                 <li key={link.name}>
                                     <Link
                                         href={link.href}
-                                        className="text-sm text-slate-400 transition hover:text-blue-400"
+                                        className="text-sm text-[#52665b] transition hover:text-[#166534] dark:text-[#a7b9ae] dark:hover:text-[#34d399]"
                                     >
                                         {link.name}
                                     </Link>
@@ -150,7 +149,7 @@ export default function Footer() {
                             Stay Updated
                         </h3>
 
-                        <p className="mb-5 text-sm leading-7 text-slate-400">
+                        <p className="mb-5 text-sm leading-7 text-[#40594b] dark:text-[#a7b9ae]">
                             Subscribe to receive creative space updates and inspiration.
                         </p>
 
@@ -160,37 +159,37 @@ export default function Footer() {
                                 required
                                 placeholder="Your email address"
                                 aria-label="Your email address"
-                                className="min-w-0 flex-1 rounded-lg border border-white/10 bg-white/5 px-3 py-3 text-sm text-white outline-none placeholder:text-slate-500 focus:border-blue-400"
+                                className="min-w-0 flex-1 rounded-lg border border-[#a7c9b1] bg-[#edf5ef] px-3 py-3 text-sm text-[#18352a] outline-none placeholder:text-[#718a79] focus:border-[#166534] dark:border-[#263d32] dark:bg-[#14251f] dark:text-white dark:placeholder:text-[#718a79] dark:focus:border-[#34d399]"
                             />
 
                             <button
                                 type="submit"
                                 aria-label="Subscribe to newsletter"
-                                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-blue-600 text-white transition hover:bg-blue-500"
+                                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[#166534] text-white transition hover:bg-[#14532d] dark:bg-[#34d399] dark:text-[#0b0f0d] dark:hover:bg-[#6ee7b7]"
                             >
                                 <Send size={17} />
                             </button>
                         </form>
 
-                        <p className="mt-3 text-xs text-slate-500">
+                        <p className="mt-3 text-xs text-[#718a79] dark:text-[#82958a]">
                             Stay connected with StudioSpace.
                         </p>
                     </div>
                 </div>
 
                 {/* Contact Information */}
-                <div className="flex flex-col gap-4 border-t border-white/10 py-7 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex flex-col gap-3 text-sm text-slate-400 sm:flex-row sm:gap-8">
+                <div className="flex flex-col gap-4 border-t border-[#b8d1bf] py-7 dark:border-[#263d32] sm:flex-row sm:items-center sm:justify-between">
+                    <div className="flex flex-col gap-3 text-sm text-[#52665b] dark:text-[#a7b9ae] sm:flex-row sm:gap-8">
                         <div className="flex items-center gap-2">
-                            <MapPin size={17} className="text-blue-400" />
+                            <MapPin size={17} className="text-[#166534] dark:text-[#34d399]" />
                             <span>Connecting creative spaces worldwide</span>
                         </div>
 
                         <Link
                             href="/contact"
-                            className="flex items-center gap-2 transition hover:text-blue-400"
+                            className="flex items-center gap-2 transition hover:text-[#166534] dark:hover:text-[#34d399]"
                         >
-                            <Mail size={17} className="text-blue-400" />
+                            <Mail size={17} className="text-[#166534] dark:text-[#34d399]" />
                             Contact Us
                             <ArrowUpRight size={14} />
                         </Link>
@@ -198,22 +197,28 @@ export default function Footer() {
                 </div>
 
                 {/* Copyright & Terms */}
-                <div className="flex flex-col items-center justify-between gap-4 border-t border-white/10 py-7 text-center sm:flex-row sm:text-left">
-                    <p className="text-xs text-slate-500">
+                <div className="flex flex-col items-center justify-between gap-4 border-t border-[#b8d1bf] py-7 text-center dark:border-[#263d32] sm:flex-row sm:text-left">
+                    <p className="text-xs text-[#718a79] dark:text-[#82958a]">
                         © 2026 StudioSpace. All rights reserved.
                     </p>
 
-                    <div className="flex items-center gap-5 text-xs text-slate-500">
-                        <Link href="/terms" className="transition hover:text-blue-400">
+                    <div className="flex items-center gap-5 text-xs text-[#718a79] dark:text-[#82958a]">
+                        <Link
+                            href="/terms"
+                            className="transition hover:text-[#166534] dark:hover:text-[#34d399]"
+                        >
                             Terms & Conditions
                         </Link>
 
-                        <Link href="/privacy" className="transition hover:text-blue-400">
+                        <Link
+                            href="/privacy"
+                            className="transition hover:text-[#166534] dark:hover:text-[#34d399]"
+                        >
                             Privacy Policy
                         </Link>
                     </div>
 
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-[#718a79] dark:text-[#82958a]">
                         Built for creators. Designed for creativity.
                     </p>
                 </div>

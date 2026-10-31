@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -36,21 +37,24 @@ export default function FeaturedStudios() {
     }, []);
 
     return (
-        <section className="bg-[#070B14] px-6 py-24 text-white">
+        <section className="border-y border-[#d1e5d8] bg-[#e8f5ec] px-6 py-24 text-[#14251f] transition-colors duration-300 dark:border-[#263d32] dark:bg-[#0b0f0d] dark:text-white md:px-12 lg:px-20">
             <div className="mx-auto max-w-7xl">
 
                 {/* Section Heading */}
                 <div className="mb-12 flex flex-col justify-between gap-5 md:flex-row md:items-end">
                     <div>
-                        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-blue-400">
+                        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.25em] text-[#166534] dark:text-[#34d399]">
                             Discover Your Space
                         </p>
 
                         <h2 className="text-3xl font-bold md:text-5xl">
-                            Featured <span className="text-blue-500">Studios</span>
+                            Featured{" "}
+                            <span className="text-[#166534] dark:text-[#34d399]">
+                                Studios
+                            </span>
                         </h2>
 
-                        <p className="mt-4 max-w-xl text-gray-400">
+                        <p className="mt-4 max-w-xl text-[#52665b] dark:text-[#a7b9ae]">
                             Explore professional creative spaces designed to bring
                             your ideas to life.
                         </p>
@@ -58,7 +62,7 @@ export default function FeaturedStudios() {
 
                     <Link
                         href="/studios"
-                        className="inline-flex items-center gap-2 font-semibold text-blue-400 transition hover:text-blue-300"
+                        className="inline-flex items-center gap-2 font-semibold text-[#166534] transition hover:text-[#14532d] dark:text-[#34d399] dark:hover:text-[#6ee7b7]"
                     >
                         Explore All Studios
                         <ArrowUpRight size={20} />
@@ -71,13 +75,14 @@ export default function FeaturedStudios() {
                         {Array.from({ length: 6 }).map((_, index) => (
                             <div
                                 key={index}
-                                className="animate-pulse overflow-hidden rounded-2xl border border-white/10 bg-white/5"
+                                className="animate-pulse overflow-hidden rounded-2xl border border-[#d1e5d8] bg-[#f7fdf8] shadow-sm dark:border-[#263d32] dark:bg-[#14251f]"
                             >
-                                <div className="h-56 bg-white/10" />
+                                <div className="h-56 bg-[#d5e8da] dark:bg-[#263d32]" />
+
                                 <div className="space-y-4 p-5">
-                                    <div className="h-4 w-1/3 rounded bg-white/10" />
-                                    <div className="h-6 w-2/3 rounded bg-white/10" />
-                                    <div className="h-4 w-1/2 rounded bg-white/10" />
+                                    <div className="h-4 w-1/3 rounded bg-[#d5e8da] dark:bg-[#263d32]" />
+                                    <div className="h-6 w-2/3 rounded bg-[#d5e8da] dark:bg-[#263d32]" />
+                                    <div className="h-4 w-1/2 rounded bg-[#d5e8da] dark:bg-[#263d32]" />
                                 </div>
                             </div>
                         ))}
@@ -86,14 +91,14 @@ export default function FeaturedStudios() {
 
                 {/* Error State */}
                 {!loading && error && (
-                    <p className="rounded-xl border border-red-500/20 bg-red-500/10 p-5 text-center text-red-300">
+                    <p className="rounded-xl border border-red-300 bg-red-50 p-5 text-center text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-300">
                         {error}
                     </p>
                 )}
 
                 {/* Empty State */}
                 {!loading && !error && studios.length === 0 && (
-                    <p className="rounded-xl border border-white/10 bg-white/5 p-8 text-center text-gray-400">
+                    <p className="rounded-xl border border-[#d1e5d8] bg-[#f7fdf8] p-8 text-center text-[#52665b] dark:border-[#263d32] dark:bg-[#14251f] dark:text-[#a7b9ae]">
                         No studios available right now.
                     </p>
                 )}
@@ -104,7 +109,7 @@ export default function FeaturedStudios() {
                         {studios.map((studio) => (
                             <article
                                 key={studio._id}
-                                className="group overflow-hidden rounded-2xl border border-white/10 bg-[#0D1422] transition duration-300 hover:-translate-y-2 hover:border-blue-500/50"
+                                className="group overflow-hidden rounded-2xl border border-[#d1e5d8] bg-[#f7fdf8] shadow-md shadow-emerald-950/5 transition duration-300 hover:-translate-y-2 hover:border-[#34d399] hover:shadow-xl hover:shadow-emerald-900/10 dark:border-[#263d32] dark:bg-[#14251f] dark:hover:border-[#34d399]/50 dark:hover:shadow-none"
                             >
                                 {/* Studio Image */}
                                 <div className="relative h-56 overflow-hidden">
@@ -117,7 +122,7 @@ export default function FeaturedStudios() {
                                         className="object-cover transition duration-500 group-hover:scale-110"
                                     />
 
-                                    <span className="absolute left-4 top-4 rounded-full border border-blue-400/30 bg-[#070B14]/80 px-3 py-1 text-xs font-medium text-blue-300 backdrop-blur">
+                                    <span className="absolute left-4 top-4 rounded-full border border-[#a7d8b8] bg-[#f0fdf4]/95 px-3 py-1 text-xs font-semibold text-[#14532d] shadow-sm backdrop-blur dark:border-[#34d399]/30 dark:bg-[#0b0f0d]/85 dark:text-[#a7f3d0]">
                                         {studio.category}
                                     </span>
                                 </div>
@@ -125,32 +130,35 @@ export default function FeaturedStudios() {
                                 {/* Studio Information */}
                                 <div className="p-5">
                                     <div className="mb-3 flex items-center justify-between gap-3">
-                                        <h3 className="text-xl font-bold transition group-hover:text-blue-400">
+                                        <h3 className="text-xl font-bold text-[#14251f] transition group-hover:text-[#166534] dark:text-white dark:group-hover:text-[#34d399]">
                                             {studio.name}
                                         </h3>
 
-                                        <div className="flex shrink-0 items-center gap-1 text-sm text-yellow-400">
+                                        <div className="flex shrink-0 items-center gap-1 text-sm font-semibold text-yellow-600 dark:text-yellow-400">
                                             <Star size={16} fill="currentColor" />
                                             {studio.rating.toFixed(1)}
                                         </div>
                                     </div>
 
-                                    <div className="mb-5 flex items-center gap-2 text-sm text-gray-400">
-                                        <MapPin size={16} className="text-blue-400" />
+                                    <div className="mb-5 flex items-center gap-2 text-sm text-[#52665b] dark:text-[#a7b9ae]">
+                                        <MapPin
+                                            size={16}
+                                            className="shrink-0 text-[#166534] dark:text-[#34d399]"
+                                        />
                                         {studio.location}
                                     </div>
 
-                                    <div className="flex items-center justify-between border-t border-white/10 pt-4">
-                                        <p className="text-lg font-bold text-blue-400">
+                                    <div className="flex items-center justify-between border-t border-[#d1e5d8] pt-4 dark:border-[#263d32]">
+                                        <p className="text-lg font-bold text-[#166534] dark:text-[#34d399]">
                                             ${studio.price}
-                                            <span className="text-sm font-normal text-gray-400">
+                                            <span className="text-sm font-medium text-[#52665b] dark:text-[#a7b9ae]">
                                                 /hr
                                             </span>
                                         </p>
 
                                         <Link
                                             href={`/studios/${studio._id}`}
-                                            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold transition hover:bg-blue-500"
+                                            className="rounded-lg bg-[#166534] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#14532d] dark:bg-[#34d399] dark:text-[#0b0f0d] dark:hover:bg-[#6ee7b7]"
                                         >
                                             View Details
                                         </Link>
