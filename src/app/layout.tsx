@@ -1,4 +1,6 @@
+
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/shared/Navbar";
 import Footer from "@/components/shared/Footer";
@@ -34,9 +36,13 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col">
         <ThemeProvider>
-          <Navbar />
+          <Suspense fallback={<div className="h-20" />}>
+            <Navbar />
+          </Suspense>
 
-          <main className="flex-1">{children}</main>
+          <main className="flex-1">
+            {children}
+          </main>
 
           <Footer />
         </ThemeProvider>
