@@ -1,9 +1,12 @@
 
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
+
 import NavbarWrapper from "@/components/shared/NavbarWrapper";
 import Footer from "@/components/shared/Footer";
 import ThemeProvider from "@/components/shared/ThemeProvider";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -42,6 +45,14 @@ export default function RootLayout({
           </main>
 
           <Footer />
+
+          {/* Global Sonner Notifications */}
+          <Toaster
+            position="top-right"
+            richColors
+            closeButton
+            duration={4000}
+          />
         </ThemeProvider>
       </body>
     </html>

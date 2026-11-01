@@ -1,8 +1,9 @@
 
 "use client";
 
-import { useState, type FormEvent, type ChangeEvent } from "react";
+import { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
+
 import Link from "next/link";
 import {
     ArrowLeft,
@@ -14,7 +15,6 @@ import {
     FileText,
     Loader2,
     User,
-    Mail,
     Users,
     ShieldCheck,
     Check,
@@ -50,6 +50,15 @@ export default function AddStudioPage() {
 
     const { data: session, isPending: sessionLoading } =
         authClient.useSession();
+
+    // Redirect unauthenticated users to Login
+    useEffect(() => {
+        if (!sessionLoading && !session?.user) {
+            router.replace(
+                `/login?callbackURL=${encodeURIComponent("/add-studio")}`
+            );
+        }
+    }, [sessionLoading, session, router]);
 
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -167,31 +176,13 @@ export default function AddStudioPage() {
     const labelClass =
         "mb-2 block text-sm font-medium text-[#294b38] dark:text-[#d5e5da]";
 
-    if (sessionLoading) {
+    if (sessionLoading || !session?.user) {
         return (
             <main className="flex min-h-screen items-center justify-center bg-[#dcebe0] dark:bg-[#0b0f0d]">
-                <Loader2 className="animate-spin text-[#166534] dark:text-[#34d399]" size={32} />
-            </main>
-        );
-    }
-
-    if (!session?.user) {
-        return (
-            <main className="flex min-h-screen items-center justify-center bg-[#dcebe0] px-5 dark:bg-[#0b0f0d]">
-                <div className="max-w-md rounded-2xl border border-[#b8d1bf] bg-[#edf5ef] p-8 text-center dark:border-[#263d32] dark:bg-[#14251f]">
-                    <h1 className="text-2xl font-bold text-[#18352a] dark:text-white">
-                        Login Required
-                    </h1>
-                    <p className="mt-3 text-sm text-[#52665b] dark:text-[#a7b9ae]">
-                        Please login to add your studio to StudioSpace.
-                    </p>
-                    <Link
-                        href="/login"
-                        className="mt-6 inline-flex rounded-lg bg-[#166534] px-6 py-3 font-semibold text-white hover:bg-[#14532d] dark:bg-[#34d399] dark:text-[#0b0f0d]"
-                    >
-                        Go to Login
-                    </Link>
-                </div>
+                <Loader2
+                    className="animate-spin text-[#166534] dark:text-[#34d399]"
+                    size={32}
+                />
             </main>
         );
     }
@@ -265,6 +256,7 @@ export default function AddStudioPage() {
                                     />
                                 </div>
                             </div>
+
                             <p className="mt-3 text-xs text-[#52665b] dark:text-[#a7b9ae]">
                                 Your account information is linked automatically.
                             </p>
@@ -276,7 +268,10 @@ export default function AddStudioPage() {
                                 Studio Name
                             </label>
                             <div className="relative">
-                                <Building2 size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#52735e] dark:text-[#8da99a]" />
+                                <Building2
+                                    size={18}
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[#52735e] dark:text-[#8da99a]"
+                                />
                                 <input
                                     id="name"
                                     name="name"
@@ -296,7 +291,10 @@ export default function AddStudioPage() {
                                 Studio Category
                             </label>
                             <div className="relative">
-                                <Tag size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#52735e] dark:text-[#8da99a]" />
+                                <Tag
+                                    size={18}
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[#52735e] dark:text-[#8da99a]"
+                                />
                                 <select
                                     id="category"
                                     name="category"
@@ -321,7 +319,10 @@ export default function AddStudioPage() {
                                 Location / Address
                             </label>
                             <div className="relative">
-                                <MapPin size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#52735e] dark:text-[#8da99a]" />
+                                <MapPin
+                                    size={18}
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[#52735e] dark:text-[#8da99a]"
+                                />
                                 <input
                                     id="location"
                                     name="location"
@@ -342,7 +343,10 @@ export default function AddStudioPage() {
                                     Price per Hour (৳)
                                 </label>
                                 <div className="relative">
-                                    <DollarSign size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#52735e] dark:text-[#8da99a]" />
+                                    <DollarSign
+                                        size={18}
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-[#52735e] dark:text-[#8da99a]"
+                                    />
                                     <input
                                         id="price"
                                         name="price"
@@ -358,11 +362,17 @@ export default function AddStudioPage() {
                             </div>
 
                             <div>
-                                <label htmlFor="securityDeposit" className={labelClass}>
+                                <label
+                                    htmlFor="securityDeposit"
+                                    className={labelClass}
+                                >
                                     Security Deposit (৳)
                                 </label>
                                 <div className="relative">
-                                    <ShieldCheck size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#52735e] dark:text-[#8da99a]" />
+                                    <ShieldCheck
+                                        size={18}
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-[#52735e] dark:text-[#8da99a]"
+                                    />
                                     <input
                                         id="securityDeposit"
                                         name="securityDeposit"
@@ -378,11 +388,17 @@ export default function AddStudioPage() {
                             </div>
 
                             <div>
-                                <label htmlFor="maxCapacity" className={labelClass}>
+                                <label
+                                    htmlFor="maxCapacity"
+                                    className={labelClass}
+                                >
                                     Maximum Capacity (People)
                                 </label>
                                 <div className="relative">
-                                    <Users size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#52735e] dark:text-[#8da99a]" />
+                                    <Users
+                                        size={18}
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-[#52735e] dark:text-[#8da99a]"
+                                    />
                                     <input
                                         id="maxCapacity"
                                         name="maxCapacity"
@@ -404,7 +420,10 @@ export default function AddStudioPage() {
                                 Studio Image URL
                             </label>
                             <div className="relative">
-                                <ImageIcon size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#52735e] dark:text-[#8da99a]" />
+                                <ImageIcon
+                                    size={18}
+                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[#52735e] dark:text-[#8da99a]"
+                                />
                                 <input
                                     id="image"
                                     name="image"
@@ -428,7 +447,8 @@ export default function AddStudioPage() {
                             </label>
                             <div className="grid grid-cols-1 gap-3 rounded-xl border border-[#b8d1bf] bg-white/60 p-4 sm:grid-cols-2 dark:border-[#263d32] dark:bg-[#0b0f0d]/40">
                                 {availableAmenities.map((amenity) => {
-                                    const selected = formData.amenities.includes(amenity);
+                                    const selected =
+                                        formData.amenities.includes(amenity);
 
                                     return (
                                         <label
@@ -438,13 +458,17 @@ export default function AddStudioPage() {
                                             <input
                                                 type="checkbox"
                                                 checked={selected}
-                                                onChange={() => handleAmenityChange(amenity)}
+                                                onChange={() =>
+                                                    handleAmenityChange(amenity)
+                                                }
                                                 className="sr-only"
                                             />
-                                            <span className={`flex h-5 w-5 items-center justify-center rounded border ${selected
-                                                    ? "border-[#166534] bg-[#166534] text-white dark:border-[#34d399] dark:bg-[#34d399] dark:text-[#0b0f0d]"
-                                                    : "border-[#9ab5a2] bg-white dark:border-[#52665b] dark:bg-[#14251f]"
-                                                }`}>
+                                            <span
+                                                className={`flex h-5 w-5 items-center justify-center rounded border ${selected
+                                                        ? "border-[#166534] bg-[#166534] text-white dark:border-[#34d399] dark:bg-[#34d399] dark:text-[#0b0f0d]"
+                                                        : "border-[#9ab5a2] bg-white dark:border-[#52665b] dark:bg-[#14251f]"
+                                                    }`}
+                                            >
                                                 {selected && <Check size={14} />}
                                             </span>
                                             <span>{amenity}</span>
@@ -456,11 +480,17 @@ export default function AddStudioPage() {
 
                         {/* Description */}
                         <div>
-                            <label htmlFor="description" className={labelClass}>
+                            <label
+                                htmlFor="description"
+                                className={labelClass}
+                            >
                                 Studio Description
                             </label>
                             <div className="relative">
-                                <FileText size={18} className="absolute left-3 top-4 text-[#52735e] dark:text-[#8da99a]" />
+                                <FileText
+                                    size={18}
+                                    className="absolute left-3 top-4 text-[#52735e] dark:text-[#8da99a]"
+                                />
                                 <textarea
                                     id="description"
                                     name="description"
@@ -482,13 +512,19 @@ export default function AddStudioPage() {
                         >
                             {loading ? (
                                 <>
-                                    <Loader2 size={19} className="animate-spin" />
+                                    <Loader2
+                                        size={19}
+                                        className="animate-spin"
+                                    />
                                     Adding Studio...
                                 </>
                             ) : (
                                 <>
                                     Add Studio
-                                    <ArrowLeft size={18} className="rotate-180" />
+                                    <ArrowLeft
+                                        size={18}
+                                        className="rotate-180"
+                                    />
                                 </>
                             )}
                         </button>

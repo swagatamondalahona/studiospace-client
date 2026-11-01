@@ -1,9 +1,9 @@
 
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import {
     AudioLines,
@@ -14,8 +14,20 @@ import {
     EyeOff,
 } from "lucide-react";
 
-export default function LoginPage() {
+function LoginForm() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const callbackURL = searchParams.get("callbackURL");
+
+    // Allow only safe internal paths
+    const redirectURL =
+        callbackURL &&
+            callbackURL.startsWith("/") &&
+            !callbackURL.startsWith("//") &&
+            !callbackURL.includes("\\")
+            ? callbackURL
+            : "/";
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -23,6 +35,7 @@ export default function LoginPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
 
+    // Email Login
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError("");
@@ -39,7 +52,7 @@ export default function LoginPage() {
                 return;
             }
 
-            router.push("/");
+            router.replace(redirectURL);
             router.refresh();
         } catch {
             setError("Something went wrong. Please try again.");
@@ -48,6 +61,7 @@ export default function LoginPage() {
         }
     };
 
+    // Google Login
     const handleGoogleLogin = async () => {
         setError("");
         setLoading(true);
@@ -55,7 +69,7 @@ export default function LoginPage() {
         try {
             await authClient.signIn.social({
                 provider: "google",
-                callbackURL: "/",
+                callbackURL: redirectURL,
             });
         } catch {
             setError("Google login failed. Please try again.");
@@ -126,7 +140,7 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        {/* Password with Show/Hide */}
+                        {/* Password */}
                         <div>
                             <label
                                 htmlFor="password"
@@ -223,5 +237,21 @@ export default function LoginPage() {
                 </p>
             </div>
         </main>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense
+            fallback={
+                <main className="flex min-h-screen items-center justify-center bg-[#dcebe0] dark:bg-[#0b0f0d]">
+                    <p className="text-[#166534] dark:text-[#34d399]">
+                        Loading...
+                    </p>
+                </main>
+            }
+        >
+            <LoginForm />
+        </Suspense>
     );
 }
