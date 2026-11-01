@@ -14,7 +14,6 @@ import {
     Compass,
     Info,
     BookOpen,
-    LayoutDashboard,
     PlusCircle,
     Building2,
     CalendarCheck,
@@ -44,19 +43,19 @@ const navLinks = [
 
 const dashboardLinks = [
     {
-        name: "Dashboard",
-        href: "/dashboard",
-        icon: LayoutDashboard,
-    },
-    {
         name: "Add New Studio",
-        href: "/dashboard/studios/new",
+        href: "/add-studio",
         icon: PlusCircle,
     },
     {
         name: "My Studio Listings",
-        href: "/dashboard/studios",
+        href: "/my-listings",
         icon: Building2,
+    },
+    {
+        name: "Host Booking Requests",
+        href: "/host-bookings",
+        icon: CalendarCheck,
     },
     {
         name: "My Bookings",
@@ -65,7 +64,6 @@ const dashboardLinks = [
     },
 ];
 
-// Light / Dark Mode Toggle
 function ThemeToggle() {
     const { resolvedTheme, setTheme } = useTheme();
     const [mounted, setMounted] = useState(false);
@@ -81,9 +79,7 @@ function ThemeToggle() {
             type="button"
             onClick={() => setTheme(isDark ? "light" : "dark")}
             disabled={!mounted}
-            aria-label={
-                isDark ? "Switch to light mode" : "Switch to dark mode"
-            }
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
             title={isDark ? "Light Mode" : "Dark Mode"}
             className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#b8d1bf] bg-white text-[#166534] transition hover:bg-[#dcebe0] disabled:opacity-50 dark:border-[#263d32] dark:bg-[#14251f] dark:text-[#34d399] dark:hover:bg-[#1b3428]"
         >
@@ -132,7 +128,6 @@ export default function Navbar({
         <header className="sticky top-0 z-50 w-full border-b border-[#b8d1bf] bg-[#edf5ef]/95 shadow-sm backdrop-blur-xl dark:border-[#263d32] dark:bg-[#0b0f0d]/95">
             <nav className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
-                {/* Original Logo */}
                 <Link
                     href="/"
                     onClick={closeMenus}
@@ -152,7 +147,6 @@ export default function Navbar({
                     </div>
                 </Link>
 
-                {/* Desktop Navigation */}
                 <div className="hidden items-center gap-1 lg:flex">
                     {navLinks.map((link) => {
                         const active = isActive(link.href);
@@ -172,9 +166,7 @@ export default function Navbar({
                     })}
                 </div>
 
-                {/* Desktop Auth / Profile */}
                 <div className="hidden items-center gap-3 lg:flex">
-
                     <ThemeToggle />
 
                     {!user ? (
@@ -272,7 +264,6 @@ export default function Navbar({
                     )}
                 </div>
 
-                {/* Mobile Theme Toggle + Menu Button */}
                 <div className="flex items-center gap-2 lg:hidden">
                     <ThemeToggle />
 
@@ -290,7 +281,6 @@ export default function Navbar({
                 </div>
             </nav>
 
-            {/* Mobile Menu */}
             {mobileMenuOpen && (
                 <div className="border-t border-[#b8d1bf] bg-[#edf5ef] px-4 py-4 dark:border-[#263d32] dark:bg-[#0b0f0d] lg:hidden">
                     <div className="mx-auto max-w-7xl space-y-1">
