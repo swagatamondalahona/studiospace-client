@@ -7,16 +7,16 @@
 :root {
   color-scheme: light;
 
-  --background: #f0fdf4;
-  --foreground: #14251f;
+  --background: #AFC4B4;
+  --foreground: #18352A;
 
-  --card: #ffffff;
-  --border: #d1e5d8;
-  --muted: #52665b;
+  --card: #C1D2C5;
+  --border: #91AA98;
+  --muted: #40594B;
 
   --primary: #166534;
-  --primary-hover: #14532d;
-  --accent: #34d399;
+  --primary-hover: #14532D;
+  --accent: #166534;
 }
 
 /* Dark Theme - Black & Forest Green */
@@ -38,6 +38,10 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);

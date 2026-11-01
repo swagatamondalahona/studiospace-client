@@ -1,7 +1,8 @@
 
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -20,6 +21,8 @@ import {
     LogOut,
     ChevronDown,
     UserRound,
+    Moon,
+    Sun,
 } from "lucide-react";
 
 interface NavbarUser {
@@ -61,6 +64,39 @@ const dashboardLinks = [
         icon: CalendarCheck,
     },
 ];
+
+// Light / Dark Mode Toggle
+function ThemeToggle() {
+    const { resolvedTheme, setTheme } = useTheme();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const isDark = resolvedTheme === "dark";
+
+    return (
+        <button
+            type="button"
+            onClick={() => setTheme(isDark ? "light" : "dark")}
+            disabled={!mounted}
+            aria-label={
+                isDark ? "Switch to light mode" : "Switch to dark mode"
+            }
+            title={isDark ? "Light Mode" : "Dark Mode"}
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-[#b8d1bf] bg-white text-[#166534] transition hover:bg-[#dcebe0] disabled:opacity-50 dark:border-[#263d32] dark:bg-[#14251f] dark:text-[#34d399] dark:hover:bg-[#1b3428]"
+        >
+            {!mounted ? (
+                <Moon size={20} />
+            ) : isDark ? (
+                <Sun size={20} />
+            ) : (
+                <Moon size={20} />
+            )}
+        </button>
+    );
+}
 
 export default function Navbar({
     user = null,
@@ -126,8 +162,8 @@ export default function Navbar({
                                 key={link.href}
                                 href={link.href}
                                 className={`rounded-xl px-4 py-2.5 text-sm font-semibold transition-all ${active
-                                    ? "bg-[#dcebe0] text-[#166534] dark:bg-[#14251f] dark:text-[#34d399]"
-                                    : "text-[#40594b] hover:bg-[#dcebe0] hover:text-[#166534] dark:text-[#a7b9ae] dark:hover:bg-[#14251f] dark:hover:text-[#6ee7b7]"
+                                        ? "bg-[#dcebe0] text-[#166534] dark:bg-[#14251f] dark:text-[#34d399]"
+                                        : "text-[#40594b] hover:bg-[#dcebe0] hover:text-[#166534] dark:text-[#a7b9ae] dark:hover:bg-[#14251f] dark:hover:text-[#6ee7b7]"
                                     }`}
                             >
                                 {link.name}
@@ -138,6 +174,9 @@ export default function Navbar({
 
                 {/* Desktop Auth / Profile */}
                 <div className="hidden items-center gap-3 lg:flex">
+
+                    <ThemeToggle />
+
                     {!user ? (
                         <>
                             <Link
@@ -207,8 +246,8 @@ export default function Navbar({
                                                     href={link.href}
                                                     onClick={closeMenus}
                                                     className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${active
-                                                        ? "bg-[#dcebe0] text-[#166534] dark:bg-[#263d32] dark:text-[#34d399]"
-                                                        : "text-[#40594b] hover:bg-[#dcebe0] dark:text-[#a7b9ae] dark:hover:bg-[#263d32]"
+                                                            ? "bg-[#dcebe0] text-[#166534] dark:bg-[#263d32] dark:text-[#34d399]"
+                                                            : "text-[#40594b] hover:bg-[#dcebe0] dark:text-[#a7b9ae] dark:hover:bg-[#263d32]"
                                                         }`}
                                                 >
                                                     <Icon size={18} />
@@ -233,14 +272,22 @@ export default function Navbar({
                     )}
                 </div>
 
-                {/* Mobile Menu Button */}
-                <button
-                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                    className="rounded-xl p-2 text-[#18352a] transition hover:bg-[#dcebe0] dark:text-white dark:hover:bg-[#14251f] lg:hidden"
-                    aria-label="Toggle menu"
-                >
-                    {mobileMenuOpen ? <X size={25} /> : <Menu size={25} />}
-                </button>
+                {/* Mobile Theme Toggle + Menu Button */}
+                <div className="flex items-center gap-2 lg:hidden">
+                    <ThemeToggle />
+
+                    <button
+                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                        className="rounded-xl p-2 text-[#18352a] transition hover:bg-[#dcebe0] dark:text-white dark:hover:bg-[#14251f]"
+                        aria-label="Toggle menu"
+                    >
+                        {mobileMenuOpen ? (
+                            <X size={25} />
+                        ) : (
+                            <Menu size={25} />
+                        )}
+                    </button>
+                </div>
             </nav>
 
             {/* Mobile Menu */}
@@ -257,8 +304,8 @@ export default function Navbar({
                                     href={link.href}
                                     onClick={closeMenus}
                                     className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${active
-                                        ? "bg-[#dcebe0] text-[#166534] dark:bg-[#14251f] dark:text-[#34d399]"
-                                        : "text-[#40594b] hover:bg-[#dcebe0] dark:text-[#a7b9ae] dark:hover:bg-[#14251f]"
+                                            ? "bg-[#dcebe0] text-[#166534] dark:bg-[#14251f] dark:text-[#34d399]"
+                                            : "text-[#40594b] hover:bg-[#dcebe0] dark:text-[#a7b9ae] dark:hover:bg-[#14251f]"
                                         }`}
                                 >
                                     <Icon size={19} />
@@ -324,8 +371,8 @@ export default function Navbar({
                                             href={link.href}
                                             onClick={closeMenus}
                                             className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${active
-                                                ? "bg-[#dcebe0] text-[#166534] dark:bg-[#14251f] dark:text-[#34d399]"
-                                                : "text-[#40594b] hover:bg-[#dcebe0] dark:text-[#a7b9ae] dark:hover:bg-[#14251f]"
+                                                    ? "bg-[#dcebe0] text-[#166534] dark:bg-[#14251f] dark:text-[#34d399]"
+                                                    : "text-[#40594b] hover:bg-[#dcebe0] dark:text-[#a7b9ae] dark:hover:bg-[#14251f]"
                                                 }`}
                                         >
                                             <Icon size={19} />
