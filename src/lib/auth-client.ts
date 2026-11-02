@@ -21,6 +21,7 @@ export const authClient = createAuthClient({
                 const authToken = ctx.response.headers.get("set-auth-token");
                 if (authToken) {
                     localStorage.setItem("better-auth-token", authToken);
+                    window.dispatchEvent(new Event("auth-state-change"));
                 }
             }
         },

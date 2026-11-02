@@ -1,16 +1,57 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/shared/Navbar";
 import { authClient } from "@/lib/auth-client";
 
+interface NavbarUser {
+    name: string;
+    image?: string;
+}
+
 export default function NavbarWrapper() {
     const router = useRouter();
 
-    // Check for token passed from OAuth redirect
+    const { data: session, isPending } = authClient.useSession();
+    const [activeUser, setActiveUser] = useState<NavbarUser | null>(null);
+
+    // Sync from useSession hook
     useEffect(() => {
-        if (typeof window !== "undefined") {
+        if (session?.user) {
+            setActiveUser({
+                name: session.user.name || "StudioSpace User",
+                image: session.user.image || undefined,
+            });
+        } else if (!isPending) {
+            // Check if there is already a token in localStorage
+            const token =
+                typeof window !== "undefined"
+                    ? localStorage.getItem("better-auth-token")
+                    : null;
+
+            if (token) {
+                authClient.getSession().then((res) => {
+                    if (res?.data?.user) {
+                        setActiveUser({
+                            name: res.data.user.name || "StudioSpace User",
+                            image: res.data.user.image || undefined,
+                        });
+                    } else {
+                        setActiveUser(null);
+                    }
+                });
+            } else {
+                setActiveUser(null);
+            }
+        }
+    }, [session, isPending]);
+
+    // Handle token from OAuth redirect and auth state events
+    useEffect(() => {
+        if (typeof window === "undefined") return;
+
+        const checkAndApplyToken = async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const token = urlParams.get("token");
 
@@ -22,20 +63,44 @@ export default function NavbarWrapper() {
                     window.location.pathname + (newQuery ? `?${newQuery}` : "");
                 window.history.replaceState({}, "", newUrl);
 
-                // Re-fetch session with the newly set token
-                authClient.getSession().then(() => {
-                    router.refresh();
-                });
+                // Fetch session immediately and update user badge in real-time
+                const res = await authClient.getSession();
+                if (res?.data?.user) {
+                    setActiveUser({
+                        name: res.data.user.name || "StudioSpace User",
+                        image: res.data.user.image || undefined,
+                    });
+                }
+                router.refresh();
             }
-        }
-    }, [router]);
+        };
 
-    const { data: session, isPending } = authClient.useSession();
+        checkAndApplyToken();
+
+        const handleAuthChange = async () => {
+            const res = await authClient.getSession();
+            if (res?.data?.user) {
+                setActiveUser({
+                    name: res.data.user.name || "StudioSpace User",
+                    image: res.data.user.image || undefined,
+                });
+            } else {
+                setActiveUser(null);
+            }
+        };
+
+        window.addEventListener("auth-state-change", handleAuthChange);
+        return () => {
+            window.removeEventListener("auth-state-change", handleAuthChange);
+        };
+    }, [router]);
 
     const handleLogout = async () => {
         try {
+            setActiveUser(null);
             if (typeof window !== "undefined") {
                 localStorage.removeItem("better-auth-token");
+                window.dispatchEvent(new Event("auth-state-change"));
             }
             await authClient.signOut();
             router.push("/login");
@@ -45,20 +110,13 @@ export default function NavbarWrapper() {
         }
     };
 
-    if (isPending) {
+    if (isPending && !activeUser) {
         return <div className="h-20 w-full" />;
     }
 
-    const user = session?.user
-        ? {
-            name: session.user.name || "StudioSpace User",
-            image: session.user.image || undefined,
-        }
-        : null;
-
     return (
         <Navbar
-            user={user}
+            user={activeUser}
             onLogout={handleLogout}
         />
     );
