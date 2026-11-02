@@ -71,6 +71,7 @@ function LoginForm() {
             const { error } = await authClient.signIn.social({
                 provider: "google",
                 callbackURL: `${window.location.origin}${redirectURL}`,
+                errorCallbackURL: `${window.location.origin}/login`,
             });
 
             if (error) {
