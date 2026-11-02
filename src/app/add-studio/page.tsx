@@ -21,7 +21,7 @@ import {
     X,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-import API_URL from "@/lib/api";
+import API_URL, { getAuthHeaders } from "@/lib/api";
 
 const categories = [
     "Photo Studios",
@@ -179,6 +179,7 @@ export default function AddStudioPage() {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    ...getAuthHeaders(),
                 },
                 credentials: "include",
                 body: JSON.stringify({

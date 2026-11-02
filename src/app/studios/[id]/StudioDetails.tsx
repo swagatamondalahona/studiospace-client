@@ -16,7 +16,7 @@ import {
     User,
     Send,
 } from "lucide-react";
-import API_URL from "@/lib/api";
+import API_URL, { getAuthHeaders } from "@/lib/api";
 
 interface Studio {
     _id: string;
@@ -259,6 +259,7 @@ export default function StudioDetails() {
                 credentials: "include",
                 headers: {
                     "Content-Type": "application/json",
+                    ...getAuthHeaders(),
                 },
                 body: JSON.stringify({
                     studioId: studio._id,

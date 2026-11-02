@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
-import API_URL from "@/lib/api";
+import API_URL, { getAuthHeaders } from "@/lib/api";
 
 interface Booking {
     _id: string;
@@ -37,6 +37,9 @@ export default function MyBookingsPage() {
             const response = await fetch(
                 `${API_URL}/api/bookings/my-bookings`,
                 {
+                    headers: {
+                        ...getAuthHeaders(),
+                    },
                     credentials: "include",
                     cache: "no-store",
                 }
@@ -77,6 +80,9 @@ export default function MyBookingsPage() {
                 `${API_URL}/api/bookings/${selectedBooking._id}/cancel`,
                 {
                     method: "PATCH",
+                    headers: {
+                        ...getAuthHeaders(),
+                    },
                     credentials: "include",
                 }
             );

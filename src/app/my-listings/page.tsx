@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
-import API_URL from "@/lib/api";
+import API_URL, { getAuthHeaders } from "@/lib/api";
 
 interface Studio {
     _id: string;
@@ -53,6 +53,9 @@ export default function MyListingsPage() {
                     `${API_URL}/api/studios/my-listings`,
                     {
                         method: "GET",
+                        headers: {
+                            ...getAuthHeaders(),
+                        },
                         credentials: "include",
                     }
                 );
@@ -103,6 +106,9 @@ export default function MyListingsPage() {
                 `${API_URL}/api/studios/${selectedStudio._id}`,
                 {
                     method: "DELETE",
+                    headers: {
+                        ...getAuthHeaders(),
+                    },
                     credentials: "include",
                 }
             );

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import API_URL from "@/lib/api";
+import API_URL, { getAuthHeaders } from "@/lib/api";
 
 interface Booking {
     _id: string;
@@ -48,6 +48,9 @@ export default function HostBookingsPage() {
                     `${API_URL}/api/bookings/host-bookings`,
                     {
                         method: "GET",
+                        headers: {
+                            ...getAuthHeaders(),
+                        },
                         credentials: "include",
                         cache: "no-store",
                     }
@@ -102,6 +105,9 @@ export default function HostBookingsPage() {
                 `${API_URL}/api/bookings/${booking._id}/${action}`,
                 {
                     method: "PATCH",
+                    headers: {
+                        ...getAuthHeaders(),
+                    },
                     credentials: "include",
                 }
             );

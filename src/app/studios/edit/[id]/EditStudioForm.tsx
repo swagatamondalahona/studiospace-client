@@ -12,7 +12,7 @@ import {
     X,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-import API_URL from "@/lib/api";
+import API_URL, { getAuthHeaders } from "@/lib/api";
 
 const categories = [
     "Photo Studios",
@@ -271,6 +271,7 @@ export default function EditStudioForm() {
                     credentials: "include",
                     headers: {
                         "Content-Type": "application/json",
+                        ...getAuthHeaders(),
                     },
                     body: JSON.stringify({
                         name: formData.name.trim(),
