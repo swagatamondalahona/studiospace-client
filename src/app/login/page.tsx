@@ -1,12 +1,12 @@
-
 "use client";
 
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 import {
-    AudioLines,
+    Aperture,
     Mail,
     Lock,
     ArrowRight,
@@ -52,6 +52,7 @@ function LoginForm() {
                 return;
             }
 
+            toast.success("Logged in successfully!");
             router.replace(redirectURL);
             router.refresh();
         } catch {
@@ -60,8 +61,6 @@ function LoginForm() {
             setLoading(false);
         }
     };
-
-    // Google Login
 
     // Google Login
     const handleGoogleLogin = async () => {
@@ -87,13 +86,13 @@ function LoginForm() {
     };
 
     return (
-        <main className="flex min-h-screen items-center justify-center bg-[#dcebe0] px-5 py-16 text-[#18352a] dark:bg-[#0b0f0d] dark:text-[#f0fdf4]">
+        <section className="flex min-h-screen items-center justify-center bg-[#dcebe0] px-5 py-16 text-[#18352a] dark:bg-[#0b0f0d] dark:text-[#f0fdf4]">
             <div className="w-full max-w-md">
 
                 {/* Logo */}
                 <Link href="/" className="mb-8 flex items-center justify-center gap-3">
                     <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#34d399] to-[#166534] text-white shadow-lg shadow-emerald-900/20">
-                        <AudioLines size={27} />
+                        <Aperture size={27} />
                     </span>
 
                     <span className="text-2xl font-bold">
@@ -151,12 +150,21 @@ function LoginForm() {
 
                         {/* Password */}
                         <div>
-                            <label
-                                htmlFor="password"
-                                className="mb-2 block text-sm font-medium text-[#18352a] dark:text-[#d1fae5]"
-                            >
-                                Password
-                            </label>
+                            <div className="mb-2 flex items-center justify-between">
+                                <label
+                                    htmlFor="password"
+                                    className="block text-sm font-medium text-[#18352a] dark:text-[#d1fae5]"
+                                >
+                                    Password
+                                </label>
+                                <button
+                                    type="button"
+                                    onClick={() => toast.info("Password reset feature will be available soon.")}
+                                    className="text-xs font-semibold text-[#166534] hover:underline dark:text-[#34d399]"
+                                >
+                                    Forgot Password?
+                                </button>
+                            </div>
 
                             <div className="flex items-center rounded-lg border border-[#b8d1bf] bg-white px-3 transition focus-within:border-[#166534] dark:border-[#365343] dark:bg-[#0b0f0d] dark:focus-within:border-[#34d399]">
                                 <Lock size={18} className="shrink-0 text-[#527463] dark:text-[#a7b9ae]" />
@@ -245,7 +253,7 @@ function LoginForm() {
                     © 2026 StudioSpace. All rights reserved.
                 </p>
             </div>
-        </main>
+        </section>
     );
 }
 
@@ -253,11 +261,11 @@ export default function LoginPage() {
     return (
         <Suspense
             fallback={
-                <main className="flex min-h-screen items-center justify-center bg-[#dcebe0] dark:bg-[#0b0f0d]">
+                <section className="flex min-h-screen items-center justify-center bg-[#dcebe0] dark:bg-[#0b0f0d]">
                     <p className="text-[#166534] dark:text-[#34d399]">
                         Loading...
                     </p>
-                </main>
+                </section>
             }
         >
             <LoginForm />

@@ -1,10 +1,9 @@
-
 "use client";
 
 import { useState, useEffect, type FormEvent, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-
 import Link from "next/link";
+import { toast } from "sonner";
 import {
     ArrowLeft,
     Image as ImageIcon,
@@ -18,11 +17,11 @@ import {
     Users,
     ShieldCheck,
     Check,
+    UploadCloud,
+    X,
 } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-
-const API_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import API_URL from "@/lib/api";
 
 const categories = [
     "Photo Studios",
@@ -61,6 +60,7 @@ export default function AddStudioPage() {
     }, [sessionLoading, session, router]);
 
     const [loading, setLoading] = useState(false);
+    const [uploadingImage, setUploadingImage] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
@@ -101,6 +101,52 @@ export default function AddStudioPage() {
         }));
     };
 
+    // ImgBB Image Upload Handler
+    const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+            toast.error("Please select a valid image file.");
+            return;
+        }
+
+        try {
+            setUploadingImage(true);
+            const uploadData = new FormData();
+            uploadData.append("image", file);
+
+            const response = await fetch(
+                "https://api.imgbb.com/1/upload?key=7ed5039a9aa04fbe32ef10f6e7ad786d",
+                {
+                    method: "POST",
+                    body: uploadData,
+                }
+            );
+
+            const result = await response.json();
+
+            if (result.success && result.data?.url) {
+                const uploadedUrl = result.data.display_url || result.data.url;
+                setFormData((prev) => ({
+                    ...prev,
+                    image: uploadedUrl,
+                }));
+                toast.success("Image uploaded successfully via ImgBB!");
+            } else {
+                throw new Error(
+                    result.error?.message || "Failed to upload image to ImgBB."
+                );
+            }
+        } catch (err) {
+            toast.error(
+                err instanceof Error ? err.message : "Image upload failed."
+            );
+        } finally {
+            setUploadingImage(false);
+        }
+    };
+
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -118,6 +164,11 @@ export default function AddStudioPage() {
             Number(formData.maxCapacity) < 1
         ) {
             setError("Please enter valid price, deposit and capacity values.");
+            return;
+        }
+
+        if (!formData.image.trim()) {
+            setError("Please upload an image or provide an image URL.");
             return;
         }
 
@@ -153,63 +204,46 @@ export default function AddStudioPage() {
                 );
             }
 
+            toast.success(data?.message || "Studio added successfully!");
             setSuccess(data?.message || "Studio added successfully!");
 
             setTimeout(() => {
                 router.push("/my-listings");
                 router.refresh();
-            }, 1200);
+            }, 1000);
         } catch (err) {
-            setError(
-                err instanceof Error
-                    ? err.message
-                    : "Something went wrong. Please try again."
-            );
+            const message =
+                err instanceof Error ? err.message : "Something went wrong.";
+            setError(message);
+            toast.error(message);
         } finally {
             setLoading(false);
         }
     };
 
     const inputClass =
-        "w-full rounded-lg border border-[#b8d1bf] bg-white px-4 py-3 text-sm text-[#18352a] outline-none transition placeholder:text-[#819488] focus:border-[#166534] dark:border-[#263d32] dark:bg-[#0b0f0d] dark:text-white dark:placeholder:text-[#71877a] dark:focus:border-[#34d399]";
+        "w-full rounded-lg border border-[#b8d1bf] bg-white px-4 py-3 text-sm text-[#18352a] outline-none transition focus:border-[#166534] dark:border-[#263d32] dark:bg-[#0b0f0d] dark:text-white dark:focus:border-[#34d399]";
 
     const labelClass =
         "mb-2 block text-sm font-medium text-[#294b38] dark:text-[#d5e5da]";
 
-    if (sessionLoading || !session?.user) {
-        return (
-            <main className="flex min-h-screen items-center justify-center bg-[#dcebe0] dark:bg-[#0b0f0d]">
-                <Loader2
-                    className="animate-spin text-[#166534] dark:text-[#34d399]"
-                    size={32}
-                />
-            </main>
-        );
-    }
-
     return (
-        <main className="min-h-screen bg-[#dcebe0] px-5 py-12 text-[#18352a] transition-colors dark:bg-[#0b0f0d] dark:text-white">
+        <section className="min-h-screen bg-[#dcebe0] px-5 py-12 text-[#18352a] transition-colors dark:bg-[#0b0f0d] dark:text-white sm:px-8">
             <div className="mx-auto max-w-3xl">
+                {/* Back Link */}
                 <Link
-                    href="/"
-                    className="mb-7 inline-flex items-center gap-2 text-sm font-medium text-[#166534] transition hover:text-[#14532d] dark:text-[#34d399] dark:hover:text-[#6ee7b7]"
+                    href="/my-listings"
+                    className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-[#166534] transition hover:text-[#14532d] dark:text-[#34d399] dark:hover:text-[#6ee7b7]"
                 >
-                    <ArrowLeft size={18} />
-                    Back to Home
+                    <ArrowLeft size={16} />
+                    Back to My Listings
                 </Link>
 
-                <div className="rounded-2xl border border-[#b8d1bf] bg-[#edf5ef] p-6 shadow-xl shadow-green-950/10 sm:p-9 dark:border-[#263d32] dark:bg-[#14251f]">
+                <div className="rounded-2xl border border-[#b8d1bf] bg-[#edf5ef] p-6 shadow-xl dark:border-[#263d32] dark:bg-[#14251f] sm:p-10">
                     <div className="mb-8">
-                        <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-[#166534] text-white dark:bg-[#34d399] dark:text-[#0b0f0d]">
-                            <Building2 size={25} />
-                        </div>
-
-                        <h1 className="text-3xl font-bold">
-                            Add Your Studio
-                        </h1>
-
+                        <h1 className="text-3xl font-bold">Add New Studio</h1>
                         <p className="mt-2 text-sm text-[#52665b] dark:text-[#a7b9ae]">
-                            Share your creative space with the StudioSpace community.
+                            List your creative space and start welcoming creators
                         </p>
                     </div>
 
@@ -230,7 +264,7 @@ export default function AddStudioPage() {
                         <div className="rounded-xl border border-[#b8d1bf] bg-white/70 p-4 dark:border-[#263d32] dark:bg-[#0b0f0d]/50">
                             <h2 className="mb-4 flex items-center gap-2 font-semibold">
                                 <User size={18} />
-                                Host Information
+                                Host Information (Read-Only)
                             </h2>
 
                             <div className="grid gap-4 sm:grid-cols-2">
@@ -303,10 +337,12 @@ export default function AddStudioPage() {
                                     onChange={handleChange}
                                     className={`${inputClass} pl-10`}
                                 >
-                                    <option value="">Select a category</option>
-                                    {categories.map((category) => (
-                                        <option key={category} value={category}>
-                                            {category}
+                                    <option value="" disabled>
+                                        Select category
+                                    </option>
+                                    {categories.map((cat) => (
+                                        <option key={cat} value={cat}>
+                                            {cat}
                                         </option>
                                     ))}
                                 </select>
@@ -330,17 +366,17 @@ export default function AddStudioPage() {
                                     required
                                     value={formData.location}
                                     onChange={handleChange}
-                                    placeholder="e.g. Dhaka, Bangladesh"
+                                    placeholder="e.g. Dhanmondi, Dhaka"
                                     className={`${inputClass} pl-10`}
                                 />
                             </div>
                         </div>
 
-                        {/* Price, Deposit and Capacity */}
-                        <div className="grid gap-5 sm:grid-cols-2">
+                        {/* Pricing & Capacity Grid */}
+                        <div className="grid gap-4 sm:grid-cols-3">
                             <div>
                                 <label htmlFor="price" className={labelClass}>
-                                    Price per Hour (৳)
+                                    Hourly Rate ($)
                                 </label>
                                 <div className="relative">
                                     <DollarSign
@@ -355,7 +391,7 @@ export default function AddStudioPage() {
                                         required
                                         value={formData.price}
                                         onChange={handleChange}
-                                        placeholder="e.g. 1500"
+                                        placeholder="e.g. 50"
                                         className={`${inputClass} pl-10`}
                                     />
                                 </div>
@@ -366,7 +402,7 @@ export default function AddStudioPage() {
                                     htmlFor="securityDeposit"
                                     className={labelClass}
                                 >
-                                    Security Deposit (৳)
+                                    Security Deposit ($)
                                 </label>
                                 <div className="relative">
                                     <ShieldCheck
@@ -381,7 +417,7 @@ export default function AddStudioPage() {
                                         required
                                         value={formData.securityDeposit}
                                         onChange={handleChange}
-                                        placeholder="e.g. 2000"
+                                        placeholder="e.g. 100"
                                         className={`${inputClass} pl-10`}
                                     />
                                 </div>
@@ -414,30 +450,92 @@ export default function AddStudioPage() {
                             </div>
                         </div>
 
-                        {/* Image URL */}
-                        <div>
-                            <label htmlFor="image" className={labelClass}>
-                                Studio Image URL
+                        {/* Image Upload System (ImgBB Integrated) */}
+                        <div className="rounded-xl border border-[#b8d1bf] bg-white/70 p-4 dark:border-[#263d32] dark:bg-[#0b0f0d]/50">
+                            <label className={labelClass}>
+                                Studio Image (Upload via ImgBB or Enter URL)
                             </label>
-                            <div className="relative">
-                                <ImageIcon
-                                    size={18}
-                                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[#52735e] dark:text-[#8da99a]"
-                                />
-                                <input
-                                    id="image"
-                                    name="image"
-                                    type="url"
-                                    required
-                                    value={formData.image}
-                                    onChange={handleChange}
-                                    placeholder="https://example.com/studio.jpg"
-                                    className={`${inputClass} pl-10`}
-                                />
+
+                            {/* Upload via ImgBB */}
+                            <div className="mb-4">
+                                <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#b8d1bf] bg-white/60 p-5 transition hover:border-[#166534] dark:border-[#263d32] dark:bg-[#14251f]/40 dark:hover:border-[#34d399]">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                        disabled={uploadingImage}
+                                        className="hidden"
+                                    />
+                                    {uploadingImage ? (
+                                        <div className="flex flex-col items-center gap-2 text-sm text-[#166534] dark:text-[#34d399]">
+                                            <Loader2 size={24} className="animate-spin" />
+                                            <span>Uploading image to ImgBB...</span>
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col items-center gap-2 text-center text-sm text-[#52735e] dark:text-[#8da99a]">
+                                            <UploadCloud size={28} className="text-[#166534] dark:text-[#34d399]" />
+                                            <span className="font-semibold text-[#18352a] dark:text-white">
+                                                Click to upload image to ImgBB
+                                            </span>
+                                            <span className="text-xs">
+                                                Supports JPG, PNG, WEBP (Direct ImgBB integration)
+                                            </span>
+                                        </div>
+                                    )}
+                                </label>
                             </div>
-                            <p className="mt-2 text-xs text-[#52665b] dark:text-[#8da99a]">
-                                Paste a publicly accessible studio image URL.
-                            </p>
+
+                            {/* Direct URL Fallback */}
+                            <div>
+                                <span className="mb-2 block text-xs font-semibold text-[#52735e] dark:text-[#8da99a]">
+                                    Or paste direct Image URL:
+                                </span>
+                                <div className="relative">
+                                    <ImageIcon
+                                        size={18}
+                                        className="absolute left-3 top-1/2 -translate-y-1/2 text-[#52735e] dark:text-[#8da99a]"
+                                    />
+                                    <input
+                                        id="image"
+                                        name="image"
+                                        type="url"
+                                        required
+                                        value={formData.image}
+                                        onChange={handleChange}
+                                        placeholder="https://i.ibb.co/example.jpg"
+                                        className={`${inputClass} pl-10`}
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Uploaded Preview */}
+                            {formData.image && (
+                                <div className="mt-4 flex items-center gap-4 rounded-lg border border-[#b8d1bf] bg-white p-3 dark:border-[#263d32] dark:bg-[#14251f]">
+                                    <img
+                                        src={formData.image}
+                                        alt="Studio preview"
+                                        className="h-16 w-24 rounded object-cover"
+                                    />
+                                    <div className="flex-1 min-w-0">
+                                        <p className="truncate text-xs font-medium text-[#18352a] dark:text-white">
+                                            {formData.image}
+                                        </p>
+                                        <span className="text-[11px] font-semibold text-green-700 dark:text-green-400">
+                                            ✓ Ready for submission
+                                        </span>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() =>
+                                            setFormData((prev) => ({ ...prev, image: "" }))
+                                        }
+                                        className="rounded p-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30"
+                                        title="Remove image"
+                                    >
+                                        <X size={18} />
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         {/* Amenities */}
@@ -507,7 +605,7 @@ export default function AddStudioPage() {
                         {/* Submit */}
                         <button
                             type="submit"
-                            disabled={loading}
+                            disabled={loading || uploadingImage}
                             className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#166534] py-3.5 font-semibold text-white transition hover:bg-[#14532d] disabled:cursor-not-allowed disabled:opacity-60 dark:bg-[#34d399] dark:text-[#0b0f0d] dark:hover:bg-[#6ee7b7]"
                         >
                             {loading ? (
@@ -531,6 +629,6 @@ export default function AddStudioPage() {
                     </form>
                 </div>
             </div>
-        </main>
+        </section>
     );
 }

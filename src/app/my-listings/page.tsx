@@ -1,11 +1,9 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-
-const API_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { toast } from "sonner";
+import API_URL from "@/lib/api";
 
 interface Studio {
     _id: string;
@@ -125,17 +123,20 @@ export default function MyListingsPage() {
 
             setSelectedStudio(null);
 
+            toast.success("Studio deleted successfully!");
             setNotification({
                 type: "success",
                 message: "Studio deleted successfully!",
             });
         } catch (err) {
+            const errorMsg =
+                err instanceof Error
+                    ? err.message
+                    : "Something went wrong while deleting.";
+            toast.error(errorMsg);
             setNotification({
                 type: "error",
-                message:
-                    err instanceof Error
-                        ? err.message
-                        : "Something went wrong while deleting.",
+                message: errorMsg,
             });
         } finally {
             setDeleting(false);
@@ -144,7 +145,7 @@ export default function MyListingsPage() {
     };
 
     return (
-        <main className="min-h-screen bg-[#dcebe0] px-5 py-16 text-[#18352a] dark:bg-[#0b0f0d] dark:text-white">
+        <section className="min-h-screen bg-[#dcebe0] px-5 py-16 text-[#18352a] dark:bg-[#0b0f0d] dark:text-white">
             <div className="mx-auto max-w-6xl">
 
                 {/* Page Header */}
@@ -198,31 +199,30 @@ export default function MyListingsPage() {
                 {/* Error */}
                 {!loading && error && (
                     <div className="mt-10 rounded-xl border border-red-300 bg-red-50 p-6 text-center dark:border-red-900 dark:bg-red-950/30">
-                        <h2 className="text-xl font-semibold text-red-700 dark:text-red-400">
-                            Unable to Load Listings
-                        </h2>
-
-                        <p className="mt-2 text-sm text-red-600 dark:text-red-300">
+                        <p className="text-red-700 dark:text-red-300">
                             {error}
                         </p>
 
-                        <p className="mt-3 text-sm text-[#52665b] dark:text-[#a7b9ae]">
-                            Please check your login session and backend server.
-                        </p>
+                        <button
+                            type="button"
+                            onClick={() => window.location.reload()}
+                            className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
+                        >
+                            Try Again
+                        </button>
                     </div>
                 )}
 
                 {/* Empty State */}
                 {!loading && !error && studios.length === 0 && (
-                    <div className="mt-10 rounded-xl border border-[#b8d1bf] bg-[#edf5ef] px-6 py-16 text-center dark:border-[#263d32] dark:bg-[#14251f]">
-                        <div className="text-5xl">🏢</div>
-
-                        <h2 className="mt-5 text-2xl font-bold">
-                            No Studio Listings Yet
+                    <div className="mt-10 rounded-2xl border border-[#b8d1bf] bg-[#edf5ef] p-12 text-center dark:border-[#263d32] dark:bg-[#14251f]">
+                        <h2 className="text-2xl font-bold">
+                            You Have No Studio Listings
                         </h2>
 
-                        <p className="mt-3 text-sm text-[#52665b] dark:text-[#a7b9ae]">
-                            Your studio listings will appear here after you add one.
+                        <p className="mx-auto mt-3 max-w-md text-sm text-[#52665b] dark:text-[#a7b9ae]">
+                            You have not added any creative studios yet. Start by listing
+                            your first space for other creators to discover and book.
                         </p>
 
                         <Link
@@ -402,6 +402,6 @@ export default function MyListingsPage() {
                     </div>
                 </div>
             )}
-        </main>
+        </section>
     );
 }

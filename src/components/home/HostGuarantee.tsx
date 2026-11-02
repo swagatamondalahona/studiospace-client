@@ -1,4 +1,3 @@
-
 import {
     ShieldCheck,
     BadgeCheck,
@@ -40,7 +39,10 @@ const benefits = [
 
 export default function HostGuarantee() {
     return (
-        <section className="bg-[#dcebe0] px-6 py-24 text-[#18352a] transition-colors duration-300 dark:bg-[#0b0f0d] dark:text-white md:px-12 lg:px-20">
+        <section
+            id="about"
+            className="bg-[#dcebe0] px-6 py-24 text-[#18352a] transition-colors duration-300 dark:bg-[#0b0f0d] dark:text-white md:px-12 lg:px-20"
+        >
             <div className="mx-auto max-w-7xl">
                 <div className="grid items-center gap-14 lg:grid-cols-2">
                     <div>

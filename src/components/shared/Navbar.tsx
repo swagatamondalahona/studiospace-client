@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -7,13 +6,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
-    AudioLines,
+    Aperture,
     Menu,
     X,
     Home,
     Compass,
     Info,
     BookOpen,
+    LayoutDashboard,
     PlusCircle,
     Building2,
     CalendarCheck,
@@ -37,11 +37,16 @@ interface NavbarProps {
 const navLinks = [
     { name: "Home", href: "/", icon: Home },
     { name: "Explore", href: "/studios", icon: Compass },
-    { name: "How It Works", href: "/how-it-works", icon: BookOpen },
-    { name: "About Us", href: "/about", icon: Info },
+    { name: "How It Works", href: "/#how-it-works", icon: BookOpen },
+    { name: "About Us", href: "/#about", icon: Info },
 ];
 
 const dashboardLinks = [
+    {
+        name: "Dashboard",
+        href: "/my-listings",
+        icon: LayoutDashboard,
+    },
     {
         name: "Add New Studio",
         href: "/add-studio",
@@ -134,7 +139,7 @@ export default function Navbar({
                     className="flex items-center gap-2"
                 >
                     <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#166534] text-white shadow-md dark:bg-[#34d399] dark:text-[#0b0f0d]">
-                        <AudioLines size={27} strokeWidth={2.2} />
+                        <Aperture size={27} strokeWidth={2.2} />
                     </div>
 
                     <div>
@@ -197,6 +202,7 @@ export default function Navbar({
                                         alt={user.name}
                                         width={36}
                                         height={36}
+                                        unoptimized
                                         className="h-9 w-9 rounded-full object-cover"
                                     />
                                 ) : (
@@ -234,7 +240,7 @@ export default function Navbar({
 
                                             return (
                                                 <Link
-                                                    key={link.href}
+                                                    key={link.name}
                                                     href={link.href}
                                                     onClick={closeMenus}
                                                     className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition ${active
@@ -333,6 +339,7 @@ export default function Navbar({
                                             alt={user.name}
                                             width={40}
                                             height={40}
+                                            unoptimized
                                             className="h-10 w-10 rounded-full object-cover"
                                         />
                                     ) : (
@@ -357,7 +364,7 @@ export default function Navbar({
 
                                     return (
                                         <Link
-                                            key={link.href}
+                                            key={link.name}
                                             href={link.href}
                                             onClick={closeMenus}
                                             className={`flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition ${active

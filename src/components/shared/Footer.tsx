@@ -1,7 +1,10 @@
+"use client";
 
+import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import {
-    AudioLines,
+    Aperture,
     Mail,
     MapPin,
     ArrowUpRight,
@@ -21,10 +24,10 @@ const footerLinks = {
         { name: "Podcast Rooms", href: "/studios?category=Podcast%20Rooms" },
     ],
     company: [
-        { name: "About Us", href: "/about" },
+        { name: "About Us", href: "/#about" },
         { name: "How It Works", href: "/#how-it-works" },
-        { name: "Host Your Space", href: "/dashboard/studios/new" },
-        { name: "Contact", href: "/contact" },
+        { name: "Host Your Space", href: "/add-studio" },
+        { name: "Contact", href: "/#contact" },
     ],
 };
 
@@ -36,8 +39,18 @@ const socialLinks = [
 ];
 
 export default function Footer() {
+    const [newsletterEmail, setNewsletterEmail] = useState("");
+
+    const handleNewsletterSubmit = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (!newsletterEmail.trim()) return;
+
+        toast.success("Thank you for subscribing to StudioSpace newsletter!");
+        setNewsletterEmail("");
+    };
+
     return (
-        <footer className="border-t border-[#b8d1bf] bg-[#cbded0] px-6 pt-16 text-[#18352a] transition-colors duration-300 dark:border-[#263d32] dark:bg-[#080d0a] dark:text-white md:px-12 lg:px-20">
+        <footer id="contact" className="border-t border-[#b8d1bf] bg-[#cbded0] px-6 pt-16 text-[#18352a] transition-colors duration-300 dark:border-[#263d32] dark:bg-[#080d0a] dark:text-white md:px-12 lg:px-20">
             <div className="mx-auto max-w-7xl">
                 <div className="grid gap-12 pb-14 sm:grid-cols-2 lg:grid-cols-5">
 
@@ -45,7 +58,7 @@ export default function Footer() {
                     <div>
                         <Link href="/" className="flex w-fit items-center gap-3">
                             <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#166534] to-[#34d399]">
-                                <AudioLines size={25} className="text-white" />
+                                <Aperture size={25} className="text-white" />
                             </span>
 
                             <span className="text-2xl font-bold tracking-tight">
@@ -153,10 +166,12 @@ export default function Footer() {
                             Subscribe to receive creative space updates and inspiration.
                         </p>
 
-                        <form className="flex items-center gap-2">
+                        <form onSubmit={handleNewsletterSubmit} className="flex items-center gap-2">
                             <input
                                 type="email"
                                 required
+                                value={newsletterEmail}
+                                onChange={(e) => setNewsletterEmail(e.target.value)}
                                 placeholder="Your email address"
                                 aria-label="Your email address"
                                 className="min-w-0 flex-1 rounded-lg border border-[#a7c9b1] bg-[#edf5ef] px-3 py-3 text-sm text-[#18352a] outline-none placeholder:text-[#718a79] focus:border-[#166534] dark:border-[#263d32] dark:bg-[#14251f] dark:text-white dark:placeholder:text-[#718a79] dark:focus:border-[#34d399]"
@@ -185,14 +200,14 @@ export default function Footer() {
                             <span>Connecting creative spaces worldwide</span>
                         </div>
 
-                        <Link
-                            href="/contact"
+                        <a
+                            href="mailto:contact@studiospace.com"
                             className="flex items-center gap-2 transition hover:text-[#166534] dark:hover:text-[#34d399]"
                         >
                             <Mail size={17} className="text-[#166534] dark:text-[#34d399]" />
-                            Contact Us
+                            contact@studiospace.com
                             <ArrowUpRight size={14} />
-                        </Link>
+                        </a>
                     </div>
                 </div>
 
@@ -203,24 +218,14 @@ export default function Footer() {
                     </p>
 
                     <div className="flex items-center gap-5 text-xs text-[#718a79] dark:text-[#82958a]">
-                        <Link
-                            href="/terms"
-                            className="transition hover:text-[#166534] dark:hover:text-[#34d399]"
-                        >
+                        <span className="cursor-default">
                             Terms & Conditions
-                        </Link>
+                        </span>
 
-                        <Link
-                            href="/privacy"
-                            className="transition hover:text-[#166534] dark:hover:text-[#34d399]"
-                        >
+                        <span className="cursor-default">
                             Privacy Policy
-                        </Link>
+                        </span>
                     </div>
-
-                    <p className="text-xs text-[#718a79] dark:text-[#82958a]">
-                        Built for creators. Designed for creativity.
-                    </p>
                 </div>
             </div>
         </footer>

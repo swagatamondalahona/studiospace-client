@@ -1,12 +1,10 @@
-
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
-const API_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { toast } from "sonner";
+import API_URL from "@/lib/api";
 
 interface Booking {
     _id: string;
@@ -99,14 +97,16 @@ export default function MyBookingsPage() {
                 )
             );
 
+            toast.success("Booking cancelled successfully!");
             setNotification("Booking cancelled successfully!");
             setSelectedBooking(null);
         } catch (err) {
-            setNotification(
+            const errorMsg =
                 err instanceof Error
                     ? err.message
-                    : "Failed to cancel booking."
-            );
+                    : "Failed to cancel booking.";
+            toast.error(errorMsg);
+            setNotification(errorMsg);
         } finally {
             setCancelling(false);
         }
@@ -139,7 +139,7 @@ export default function MyBookingsPage() {
     if (loading) {
         return (
             <div className="flex min-h-[70vh] items-center justify-center">
-                <div className="h-12 w-12 animate-spin rounded-full border-4 border-green-700 border-t-transparent" />
+                <div className="h-12 w-12 animate-spin rounded-full border-4 border-green-700 border-t-transparent dark:border-[#34d399] dark:border-t-transparent" />
             </div>
         );
     }
@@ -166,7 +166,7 @@ export default function MyBookingsPage() {
 
                     <Link
                         href="/studios"
-                        className="inline-flex items-center justify-center rounded-lg bg-green-800 px-6 py-3 font-semibold text-white transition hover:bg-green-700"
+                        className="inline-flex items-center justify-center rounded-lg bg-green-800 px-6 py-3 font-semibold text-white transition hover:bg-green-700 dark:bg-[#34d399] dark:text-[#0b0f0d] dark:hover:bg-[#6ee7b7]"
                     >
                         Explore Studios
                     </Link>
@@ -231,7 +231,7 @@ export default function MyBookingsPage() {
 
                         <Link
                             href="/studios"
-                            className="mt-7 inline-flex rounded-lg bg-green-800 px-6 py-3 font-semibold text-white transition hover:bg-green-700"
+                            className="mt-7 inline-flex rounded-lg bg-green-800 px-6 py-3 font-semibold text-white transition hover:bg-green-700 dark:bg-[#34d399] dark:text-[#0b0f0d]"
                         >
                             Explore Studios
                         </Link>

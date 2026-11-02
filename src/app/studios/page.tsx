@@ -1,7 +1,7 @@
-
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { MapPin, Star, Search, SlidersHorizontal, ArrowUpRight } from "lucide-react";
@@ -18,12 +18,24 @@ const categories = [
     "Art Workshops",
 ];
 
-export default function StudiosPage() {
+function StudiosList() {
+    const searchParams = useSearchParams();
+    const queryCategory = searchParams.get("category");
+
     const [studios, setStudios] = useState<Studio[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const [search, setSearch] = useState("");
-    const [category, setCategory] = useState("All");
+    const [category, setCategory] = useState<string>("All");
+
+    // Sync category when query param changes
+    useEffect(() => {
+        if (queryCategory && categories.includes(queryCategory)) {
+            setCategory(queryCategory);
+        } else if (!queryCategory) {
+            setCategory("All");
+        }
+    }, [queryCategory]);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -33,12 +45,9 @@ export default function StudiosPage() {
                 setLoading(true);
                 setError("");
 
-                const response = await fetch(
-                    `${API_URL}/api/studios`,
-                    {
-                        signal: controller.signal,
-                    }
-                );
+                const response = await fetch(`${API_URL}/api/studios`, {
+                    signal: controller.signal,
+                });
 
                 if (!response.ok) {
                     throw new Error("Failed to fetch studios.");
@@ -82,7 +91,7 @@ export default function StudiosPage() {
     }, [studios, category, search]);
 
     return (
-        <main className="min-h-screen bg-[#f7fdf8] px-5 py-16 text-[#14251f] transition-colors dark:bg-[#0b0f0d] dark:text-white md:px-10 lg:px-20">
+        <section className="min-h-screen bg-[#f7fdf8] px-5 py-16 text-[#14251f] transition-colors dark:bg-[#0b0f0d] dark:text-white md:px-10 lg:px-20">
             <div className="mx-auto max-w-7xl">
 
                 {/* Page Heading */}
@@ -132,6 +141,7 @@ export default function StudiosPage() {
                     {categories.map((item) => (
                         <button
                             key={item}
+                            type="button"
                             onClick={() => setCategory(item)}
                             className={`rounded-full border px-5 py-2.5 text-sm font-semibold transition ${category === item
                                     ? "border-[#166534] bg-[#166534] text-white dark:border-[#34d399] dark:bg-[#34d399] dark:text-[#0b0f0d]"
@@ -261,6 +271,7 @@ export default function StudiosPage() {
                         </p>
 
                         <button
+                            type="button"
                             onClick={() => {
                                 setSearch("");
                                 setCategory("All");
@@ -272,6 +283,20 @@ export default function StudiosPage() {
                     </div>
                 )}
             </div>
-        </main>
+        </section>
+    );
+}
+
+export default function StudiosPage() {
+    return (
+        <Suspense
+            fallback={
+                <div className="flex min-h-[60vh] items-center justify-center">
+                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#166534] border-t-transparent dark:border-[#34d399] dark:border-t-transparent" />
+                </div>
+            }
+        >
+            <StudiosList />
+        </Suspense>
     );
 }

@@ -1,21 +1,25 @@
-
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent, type ChangeEvent } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
+import {
+    ArrowLeft,
+    Image as ImageIcon,
+    Loader2,
+    UploadCloud,
+    X,
+} from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-
-const API_URL =
-    process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import API_URL from "@/lib/api";
 
 const categories = [
     "Photo Studios",
-    "Video Production",
-    "Music Studios",
-    "Podcast Studios",
-    "Event Spaces",
-    "Creative Spaces",
+    "Sound Stages",
+    "Podcast Rooms",
+    "Music Suites",
+    "Art Workshops",
 ];
 
 const availableAmenities = [
@@ -57,6 +61,7 @@ export default function EditStudioForm() {
 
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
+    const [uploadingImage, setUploadingImage] = useState(false);
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
 
@@ -181,6 +186,52 @@ export default function EditStudioForm() {
         }));
     };
 
+    // ImgBB Image Upload
+    const handleImageUpload = async (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (!file.type.startsWith("image/")) {
+            toast.error("Please select a valid image file.");
+            return;
+        }
+
+        try {
+            setUploadingImage(true);
+            const uploadData = new FormData();
+            uploadData.append("image", file);
+
+            const response = await fetch(
+                "https://api.imgbb.com/1/upload?key=7ed5039a9aa04fbe32ef10f6e7ad786d",
+                {
+                    method: "POST",
+                    body: uploadData,
+                }
+            );
+
+            const result = await response.json();
+
+            if (result.success && result.data?.url) {
+                const uploadedUrl = result.data.display_url || result.data.url;
+                setFormData((prev) => ({
+                    ...prev,
+                    image: uploadedUrl,
+                }));
+                toast.success("Image uploaded successfully via ImgBB!");
+            } else {
+                throw new Error(
+                    result.error?.message || "Failed to upload image to ImgBB."
+                );
+            }
+        } catch (err) {
+            toast.error(
+                err instanceof Error ? err.message : "Image upload failed."
+            );
+        } finally {
+            setUploadingImage(false);
+        }
+    };
+
     const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
@@ -243,6 +294,7 @@ export default function EditStudioForm() {
                 );
             }
 
+            toast.success("Studio updated successfully!");
             setSuccess("Studio updated successfully!");
 
             setTimeout(() => {
@@ -250,11 +302,12 @@ export default function EditStudioForm() {
                 router.refresh();
             }, 1000);
         } catch (err) {
-            setError(
+            const message =
                 err instanceof Error
                     ? err.message
-                    : "Something went wrong while updating."
-            );
+                    : "Something went wrong while updating.";
+            setError(message);
+            toast.error(message);
         } finally {
             setSubmitting(false);
         }
@@ -303,42 +356,90 @@ export default function EditStudioForm() {
     }
 
     return (
-        <section className="min-h-screen bg-[#dcebe0] px-4 py-12 dark:bg-[#0b0f0d]">
-            <div className="mx-auto max-w-4xl">
-                {/* Heading */}
-                <div className="mb-8">
-                    <Link
-                        href="/my-listings"
-                        className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-[#166534] hover:text-[#14532d] dark:text-[#34d399] dark:hover:text-[#6ee7b7]"
-                    >
-                        ← Back to My Listings
-                    </Link>
+        <section className="min-h-screen bg-[#dcebe0] px-4 py-12 text-[#18352a] transition-colors dark:bg-[#0b0f0d] dark:text-white sm:px-6 lg:px-8">
+            <div className="mx-auto max-w-3xl">
+                {/* Back button */}
+                <Link
+                    href="/my-listings"
+                    className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-[#166534] transition hover:text-[#14532d] dark:text-[#34d399] dark:hover:text-[#6ee7b7]"
+                >
+                    <ArrowLeft size={16} />
+                    Back to My Listings
+                </Link>
 
-                    <h1 className="text-3xl font-bold text-[#18352a] sm:text-4xl dark:text-[#e5f2e9]">
-                        Edit Your Studio
-                    </h1>
+                <div className="rounded-3xl border border-[#b8d1bf] bg-white p-6 shadow-xl dark:border-[#263d32] dark:bg-[#14251f] sm:p-10">
+                    <div className="mb-8 border-b border-[#b8d1bf] pb-6 dark:border-[#263d32]">
+                        <h1 className="text-3xl font-bold">Edit Studio</h1>
+                        <p className="mt-2 text-sm text-[#52665b] dark:text-[#a7b9ae]">
+                            Update your studio specifications and details.
+                        </p>
+                    </div>
 
-                    <p className="mt-3 text-[#52665b] dark:text-[#a7b9ae]">
-                        Update your studio information and keep your listing
-                        accurate.
-                    </p>
-                </div>
+                    {error && (
+                        <div
+                            role="alert"
+                            className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-medium text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-300"
+                        >
+                            {error}
+                        </div>
+                    )}
 
-                {/* Form Card */}
-                <div className="rounded-3xl border border-[#b8d1bf] bg-[#edf5ef] p-5 shadow-sm sm:p-8 dark:border-[#263d32] dark:bg-[#14251f]">
+                    {success && (
+                        <div
+                            role="status"
+                            className="mb-6 rounded-2xl border border-green-200 bg-green-50 p-4 text-sm font-medium text-green-800 dark:border-green-900 dark:bg-green-950/30 dark:text-green-300"
+                        >
+                            {success}
+                        </div>
+                    )}
+
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        {/* Host Information (Read Only) */}
+                        <div className="rounded-2xl border border-[#b8d1bf] bg-[#edf5ef] p-5 dark:border-[#263d32] dark:bg-[#0b0f0d]/50">
+                            <h2 className="mb-4 text-base font-bold text-[#18352a] dark:text-[#e5f2e9]">
+                                Host Information (Read-Only)
+                            </h2>
+
+                            <div className="grid gap-4 sm:grid-cols-2">
+                                <div>
+                                    <label className={labelClass}>
+                                        Host Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={ownerName}
+                                        readOnly
+                                        disabled
+                                        className={`${inputClass} cursor-not-allowed opacity-75`}
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className={labelClass}>
+                                        Host Email
+                                    </label>
+                                    <input
+                                        type="email"
+                                        value={ownerEmail}
+                                        readOnly
+                                        disabled
+                                        className={`${inputClass} cursor-not-allowed opacity-75`}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
                         {/* Studio Name */}
                         <div>
                             <label className={labelClass}>
                                 Studio Name *
                             </label>
-
                             <input
                                 type="text"
                                 name="name"
                                 value={formData.name}
                                 onChange={handleChange}
-                                placeholder="Enter studio name"
+                                placeholder="Studio Name"
                                 className={inputClass}
                                 required
                             />
@@ -349,7 +450,6 @@ export default function EditStudioForm() {
                             <label className={labelClass}>
                                 Category *
                             </label>
-
                             <select
                                 name="category"
                                 value={formData.category}
@@ -357,8 +457,9 @@ export default function EditStudioForm() {
                                 className={inputClass}
                                 required
                             >
-                                <option value="">Select a category</option>
-
+                                <option value="" disabled>
+                                    Select a category
+                                </option>
                                 {categories.map((category) => (
                                     <option key={category} value={category}>
                                         {category}
@@ -370,34 +471,32 @@ export default function EditStudioForm() {
                         {/* Location */}
                         <div>
                             <label className={labelClass}>
-                                Location *
+                                Location / Address *
                             </label>
-
                             <input
                                 type="text"
                                 name="location"
                                 value={formData.location}
                                 onChange={handleChange}
-                                placeholder="Enter studio address"
+                                placeholder="Dhanmondi, Dhaka"
                                 className={inputClass}
                                 required
                             />
                         </div>
 
-                        {/* Price and Deposit */}
-                        <div className="grid gap-6 sm:grid-cols-2">
+                        {/* Pricing & Capacity Grid */}
+                        <div className="grid gap-4 sm:grid-cols-3">
                             <div>
                                 <label className={labelClass}>
-                                    Hourly Rate ($) *
+                                    Price / Hour ($) *
                                 </label>
-
                                 <input
                                     type="number"
                                     name="price"
                                     min="1"
                                     value={formData.price}
                                     onChange={handleChange}
-                                    placeholder="1500"
+                                    placeholder="50"
                                     className={inputClass}
                                     required
                                 />
@@ -407,61 +506,99 @@ export default function EditStudioForm() {
                                 <label className={labelClass}>
                                     Security Deposit ($) *
                                 </label>
-
                                 <input
                                     type="number"
                                     name="securityDeposit"
                                     min="0"
                                     value={formData.securityDeposit}
                                     onChange={handleChange}
-                                    placeholder="2000"
+                                    placeholder="100"
+                                    className={inputClass}
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <label className={labelClass}>
+                                    Max Capacity *
+                                </label>
+                                <input
+                                    type="number"
+                                    name="maxCapacity"
+                                    min="1"
+                                    value={formData.maxCapacity}
+                                    onChange={handleChange}
+                                    placeholder="20"
                                     className={inputClass}
                                     required
                                 />
                             </div>
                         </div>
 
-                        {/* Capacity */}
-                        <div>
+                        {/* Image Upload with ImgBB */}
+                        <div className="rounded-2xl border border-[#b8d1bf] bg-[#edf5ef] p-5 dark:border-[#263d32] dark:bg-[#0b0f0d]/50">
                             <label className={labelClass}>
-                                Maximum Capacity *
+                                Studio Image (Upload via ImgBB or Enter URL) *
                             </label>
 
-                            <input
-                                type="number"
-                                name="maxCapacity"
-                                min="1"
-                                value={formData.maxCapacity}
-                                onChange={handleChange}
-                                placeholder="20"
-                                className={inputClass}
-                                required
-                            />
-                        </div>
+                            {/* ImgBB Upload input */}
+                            <div className="mb-4">
+                                <label className="flex cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#b8d1bf] bg-white/70 p-4 transition hover:border-[#166534] dark:border-[#263d32] dark:bg-[#14251f]/50 dark:hover:border-[#34d399]">
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                        disabled={uploadingImage}
+                                        className="hidden"
+                                    />
+                                    {uploadingImage ? (
+                                        <div className="flex items-center gap-2 text-sm text-[#166534] dark:text-[#34d399]">
+                                            <Loader2 size={20} className="animate-spin" />
+                                            <span>Uploading image to ImgBB...</span>
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col items-center gap-1.5 text-center text-sm text-[#52735e] dark:text-[#8da99a]">
+                                            <UploadCloud size={24} className="text-[#166534] dark:text-[#34d399]" />
+                                            <span className="font-semibold text-[#18352a] dark:text-white">
+                                                Upload replacement image via ImgBB
+                                            </span>
+                                        </div>
+                                    )}
+                                </label>
+                            </div>
 
-                        {/* Image URL */}
-                        <div>
-                            <label className={labelClass}>
-                                Studio Image URL *
-                            </label>
+                            {/* Direct URL input */}
+                            <div>
+                                <span className="mb-2 block text-xs font-semibold text-[#52735e] dark:text-[#8da99a]">
+                                    Or update image URL directly:
+                                </span>
+                                <input
+                                    type="url"
+                                    name="image"
+                                    value={formData.image}
+                                    onChange={handleChange}
+                                    placeholder="https://i.ibb.co/studio.jpg"
+                                    className={inputClass}
+                                    required
+                                />
+                            </div>
 
-                            <input
-                                type="url"
-                                name="image"
-                                value={formData.image}
-                                onChange={handleChange}
-                                placeholder="https://example.com/studio.jpg"
-                                className={inputClass}
-                                required
-                            />
-
+                            {/* Preview */}
                             {formData.image && (
-                                <div className="mt-4 overflow-hidden rounded-2xl border border-[#b8d1bf] dark:border-[#263d32]">
+                                <div className="mt-4 flex items-center gap-4 rounded-xl border border-[#b8d1bf] bg-white p-3 dark:border-[#263d32] dark:bg-[#14251f]">
                                     <img
                                         src={formData.image}
                                         alt="Studio preview"
-                                        className="h-56 w-full object-cover"
+                                        className="h-20 w-32 rounded-lg object-cover"
                                     />
+                                    <div className="flex-1 min-w-0">
+                                        <p className="truncate text-xs font-medium text-[#18352a] dark:text-white">
+                                            {formData.image}
+                                        </p>
+                                        <span className="text-xs font-semibold text-green-700 dark:text-green-400">
+                                            ✓ Current Studio Image
+                                        </span>
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -509,84 +646,28 @@ export default function EditStudioForm() {
                                 name="description"
                                 value={formData.description}
                                 onChange={handleChange}
-                                placeholder="Describe your studio, facilities and services..."
-                                rows={6}
-                                className={`${inputClass} resize-y`}
+                                rows={5}
+                                placeholder="Describe your creative space..."
+                                className={`${inputClass} resize-none`}
                                 required
                             />
                         </div>
 
-                        {/* Host Information */}
-                        <div className="rounded-2xl border border-[#b8d1bf] bg-[#dcebe0] p-5 dark:border-[#263d32] dark:bg-[#0b0f0d]">
-                            <h3 className="mb-4 font-bold text-[#18352a] dark:text-[#e5f2e9]">
-                                Host Information
-                            </h3>
-
-                            <div className="grid gap-4 sm:grid-cols-2">
-                                <div>
-                                    <label className={labelClass}>
-                                        Host Name
-                                    </label>
-
-                                    <input
-                                        type="text"
-                                        value={ownerName}
-                                        readOnly
-                                        className={`${inputClass} cursor-not-allowed opacity-75`}
-                                    />
-                                </div>
-
-                                <div>
-                                    <label className={labelClass}>
-                                        Host Email
-                                    </label>
-
-                                    <input
-                                        type="email"
-                                        value={ownerEmail}
-                                        readOnly
-                                        className={`${inputClass} cursor-not-allowed opacity-75`}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Feedback */}
-                        {error && (
-                            <div
-                                role="alert"
-                                className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900 dark:bg-red-950/30 dark:text-red-300"
-                            >
-                                {error}
-                            </div>
-                        )}
-
-                        {success && (
-                            <div
-                                role="status"
-                                className="rounded-xl border border-green-300 bg-green-50 px-4 py-3 text-sm text-green-800 dark:border-green-900 dark:bg-green-950/30 dark:text-green-300"
-                            >
-                                {success}
-                            </div>
-                        )}
-
-                        {/* Buttons */}
-                        <div className="flex flex-col-reverse gap-3 border-t border-[#b8d1bf] pt-6 sm:flex-row sm:justify-end dark:border-[#263d32]">
+                        {/* Submit Button */}
+                        <div className="flex flex-col gap-3 pt-4 sm:flex-row sm:justify-end">
                             <Link
                                 href="/my-listings"
-                                className="rounded-xl border border-[#b8d1bf] px-6 py-3 text-center font-semibold text-[#18352a] transition hover:bg-[#dcebe0] dark:border-[#263d32] dark:text-[#e5f2e9] dark:hover:bg-[#1b3428]"
+                                className="rounded-xl border border-[#b8d1bf] px-6 py-3 text-center font-semibold text-[#18352a] transition hover:bg-[#edf5ef] dark:border-[#263d32] dark:text-[#e5f2e9] dark:hover:bg-[#14251f]"
                             >
                                 Cancel
                             </Link>
 
                             <button
                                 type="submit"
-                                disabled={submitting}
-                                className="rounded-xl bg-[#166534] px-7 py-3 font-semibold text-white transition hover:bg-[#14532d] disabled:cursor-not-allowed disabled:opacity-60"
+                                disabled={submitting || uploadingImage}
+                                className="rounded-xl bg-[#166534] px-8 py-3 font-semibold text-white transition hover:bg-[#14532d] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#34d399] dark:text-[#0b0f0d] dark:hover:bg-[#6ee7b7]"
                             >
-                                {submitting
-                                    ? "Updating Studio..."
-                                    : "Update Studio"}
+                                {submitting ? "Saving Changes..." : "Save Changes"}
                             </button>
                         </div>
                     </form>
