@@ -62,16 +62,25 @@ function LoginForm() {
     };
 
     // Google Login
+
+    // Google Login
     const handleGoogleLogin = async () => {
         setError("");
         setLoading(true);
 
         try {
-            await authClient.signIn.social({
+            const { error } = await authClient.signIn.social({
                 provider: "google",
-                callbackURL: redirectURL,
+                callbackURL: `${window.location.origin}${redirectURL}`,
             });
-        } catch {
+
+            if (error) {
+                console.error("Google Login Error:", error);
+                setError(error.message || "Google login failed.");
+                setLoading(false);
+            }
+        } catch (err) {
+            console.error("Google Login Error:", err);
             setError("Google login failed. Please try again.");
             setLoading(false);
         }
